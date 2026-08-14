@@ -25,8 +25,9 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
   const isModel = url.pathname.startsWith('/models/');
   const isAsset = url.pathname.startsWith('/assets/');
+  const isCdn = url.hostname.includes('jsdelivr.net') || url.hostname.includes('fonts.gstatic.com');
 
-  if (isModel || isAsset || CORE_ASSETS.includes(url.pathname)) {
+  if (isModel || isAsset || isCdn || CORE_ASSETS.includes(url.pathname)) {
     event.respondWith(
       caches.open(CACHE_NAME).then(async (cache) => {
         const cached = await cache.match(event.request);
