@@ -63,6 +63,62 @@ export default function CameraFeed({ onDetections, onAlert }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status]);
 
+  // --- snapshot capture helper ---
+  const captureSnapshot = useCallback((boxes) => {
+    const video = videoRef.current;
+    if (!video) return null;
+    const snapCanvas = document.createElement('canvas');
+    snapCanvas.width = video.videoWidth || 640;
+    snapCanvas.height = video.videoHeight || 480;
+    const ctx = snapCanvas.getContext('2d');
+
+    // Draw video frame
+    ctx.drawImage(video, 0, 0, snapCanvas.width, snapCanvas.height);
+
+    // Draw unsafe zone
+    const z = zoneRef.current;
+    if (z) {
+      ctx.strokeStyle = '#e4572e';
+      ctx.lineWidth = 3;
+      ctx.setLineDash([8, 4]);
+      ctx.strokeRect(z.x1 * snapCanvas.width, z.y1 * snapCanvas.height, (z.x2 - z.x1) * snapCanvas.width, (z.y2 - z.y1) * snapCanvas.height);
+      ctx.setLineDash([]);
+      ctx.fillStyle = 'rgba(228,87,46,0.2)';
+      ctx.fillRect(z.x1 * snapCanvas.width, z.y1 * snapCanvas.height, (z.x2 - z.x1) * snapCanvas.width, (z.y2 - z.y1) * snapCanvas.height);
+    }
+
+    // Draw bounding boxes
+    boxes.forEach((b) => {
+      const x = b.x1 * snapCanvas.width;
+      const y = b.y1 * snapCanvas.height;
+      const w = (b.x2 - b.x1) * snapCanvas.width;
+      const h = (b.y2 - b.y1) * snapCanvas.height;
+
+      const isViolation = b.label.startsWith('no-');
+      const boxColor = isViolation ? '#e4572e' : '#f5b700';
+
+      ctx.strokeStyle = boxColor;
+      ctx.lineWidth = 3;
+      ctx.strokeRect(x, y, w, h);
+      const text = `${b.label.toUpperCase()} ${(b.score * 100).toFixed(0)}%`;
+      ctx.font = 'bold 14px monospace';
+      const tw = ctx.measureText(text).width + 12;
+      ctx.fillStyle = boxColor;
+      ctx.fillRect(x, Math.max(0, y - 22), tw, 22);
+      ctx.fillStyle = '#12141a';
+      ctx.fillText(text, x + 6, Math.max(16, y - 6));
+    });
+
+    // Timestamp watermark
+    ctx.fillStyle = 'rgba(0,0,0,0.7)';
+    ctx.fillRect(10, snapCanvas.height - 30, 360, 24);
+    ctx.fillStyle = '#f5b700';
+    ctx.font = '11px monospace';
+    ctx.fillText(`EVIDENCE SNAPSHOT · ${new Date().toISOString()}`, 16, snapCanvas.height - 14);
+
+    return snapCanvas.toDataURL('image/jpeg', 0.85);
+  }, []);
+
   // --- zone alert checking ---
   const checkZoneAlerts = useCallback((boxes) => {
     const z = zoneRef.current;
@@ -72,10 +128,11 @@ export default function CameraFeed({ onDetections, onAlert }) {
       const cy = (b.y1 + b.y2) / 2;
       const inZone = cx >= z.x1 && cx <= z.x2 && cy >= z.y1 && cy <= z.y2;
       if (inZone) {
-        onAlert?.({ label: b.label, score: b.score, time: new Date() });
+        const snapshotData = captureSnapshot(boxes);
+        onAlert?.({ label: b.label, score: b.score, time: new Date(), snapshot: snapshotData });
       }
     });
-  }, [onAlert]);
+  }, [onAlert, captureSnapshot]);
 
   // --- overlay renderer ---
   const drawOverlay = useCallback((boxes) => {

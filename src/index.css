@@ -334,9 +334,86 @@ button {
 
 .alert-item.safe { border-left-color: var(--green); }
 
-.alert-item .time {
-  color: var(--text-dim);
+.btn-snap {
+  background: var(--panel);
+  border: 1px solid var(--yellow);
+  color: var(--yellow);
   font-size: 10px;
+  padding: 3px 8px;
+  border-radius: 3px;
+  cursor: pointer;
+}
+.btn-snap:hover {
+  background: var(--yellow);
+  color: #12141a;
+}
+
+/* Modal styles for Evidence Vault */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(4px);
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.modal-content {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  max-width: 600px;
+  width: 100%;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+  font-family: var(--font-display);
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  color: var(--yellow);
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  font-size: 16px;
+  cursor: pointer;
+}
+.modal-close:hover { color: #fff; }
+
+.modal-body { padding: 16px; }
+
+.evidence-img {
+  width: 100%;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  margin-bottom: 12px;
+}
+
+.modal-meta {
+  font-size: 11px;
+  color: var(--text-dim);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.modal-footer {
+  padding: 12px 16px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: flex-end;
 }
 
 .empty-state {
