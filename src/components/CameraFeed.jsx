@@ -3,7 +3,7 @@ import { useOnnxDetector } from '../hooks/useOnnxDetector.js';
 
 const DETECT_INTERVAL_MS = 200; // ~5 fps inference loop
 
-export default function CameraFeed({ onDetections, onAlert }) {
+export default function CameraFeed({ onDetections, onAlert, audioEnabled, onToggleAudio }) {
   const videoRef = useRef(null);
   const overlayRef = useRef(null);
   const scratchRef = useRef(document.createElement('canvas'));
@@ -253,6 +253,10 @@ export default function CameraFeed({ onDetections, onAlert }) {
           {zoneMode ? 'Drawing Zone — click & drag on feed' : 'Define Unsafe Zone'}
         </button>
         {zone && <button className="btn" onClick={clearZone}>Clear Zone</button>}
+
+        <button className={`btn ${audioEnabled ? 'active' : ''}`} onClick={onToggleAudio} style={{ marginLeft: 'auto' }}>
+          {audioEnabled ? '🔊 Audio Siren: ON' : '🔇 Audio Muted'}
+        </button>
       </div>
     </div>
   );

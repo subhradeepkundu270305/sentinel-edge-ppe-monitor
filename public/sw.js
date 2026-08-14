@@ -1,4 +1,4 @@
-const CACHE_NAME = 'sentinel-edge-cache-v2';
+const CACHE_NAME = 'sentinel-edge-cache-v4';
 // Model files are large — cache them explicitly on first successful fetch
 // rather than pre-caching, so install doesn't fail if the model isn't there yet.
 const CORE_ASSETS = ['/', '/index.html', '/manifest.json'];

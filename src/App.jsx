@@ -66,7 +66,12 @@ export default function App() {
       <div className="main-grid">
         <section className="panel">
           <div className="panel-title">Live Feed</div>
-          <CameraFeed onDetections={handleDetections} onAlert={handleAlert} />
+          <CameraFeed
+            onDetections={handleDetections}
+            onAlert={handleAlert}
+            audioEnabled={audioEnabled}
+            onToggleAudio={() => setAudioEnabled((v) => !v)}
+          />
         </section>
 
         <aside className="panel">
