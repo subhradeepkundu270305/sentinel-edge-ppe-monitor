@@ -4,10 +4,13 @@ import App from './App.jsx';
 import './index.css';
 
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js').catch((err) => {
+  window.addEventListener('load', async () => {
+    try {
+      const reg = await navigator.serviceWorker.register('/sw.js');
+      reg.update(); // check for new SW immediately
+    } catch (err) {
       console.warn('Service worker registration failed:', err);
-    });
+    }
   });
 }
 
